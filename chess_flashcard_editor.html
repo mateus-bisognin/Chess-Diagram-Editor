@@ -162,6 +162,12 @@
             visibility: hidden;
         }
 
+        #editing-board {
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
         @media print {
             .editor {
                 display: none;
@@ -368,7 +374,8 @@ var $fen = $('#fen')
 var $pgn = $('#pgn')
 
 function onDragStart (source, piece, position, orientation) {
-  // do not pick up pieces if the game is over
+  document.addEventListener('touchmove', preventScroll, { passive: false });
+    // do not pick up pieces if the game is over
   if (game.game_over()) return false
 
   // only pick up pieces for the side to move
@@ -379,7 +386,9 @@ function onDragStart (source, piece, position, orientation) {
 }
 
 function onDrop (source, target) {
-  // see if the move is legal
+  document.removeEventListener('touchmove', preventScroll);
+
+    // see if the move is legal
   var move = game.move({
     from: source,
     to: target,
@@ -443,6 +452,8 @@ function extrairMovimentos(pgn) {
     .trim();
 }
 
+let preventScroll = e => e.preventDefault();
+
 var board = null
 const configPlayingBoard = {
     draggable: true,
@@ -455,6 +466,12 @@ const configPlayingBoard = {
 }
 const configEditingBoard = {
     draggable: true,
+    onDragStart: function () {
+        document.addEventListener('touchmove', preventScroll, { passive: false });
+    },
+    onDrop: function () {
+        document.removeEventListener('touchmove', preventScroll);
+    },
     dropOffBoard: 'trash',
     sparePieces: true,
     pieceTheme: pieceTheme
