@@ -14,6 +14,10 @@
         
     </script>
     <style>
+        /* Make layout sizing predictable and responsive */
+        * { box-sizing: border-box; }
+        /* Avoid form controls expanding beyond containers */
+        input, textarea, button, select { max-width: 100%; }
         .main {
             display: flex;
             flex-direction: column;
@@ -146,7 +150,8 @@
 
         .answer-board {
             margin-bottom: 16px;
-            width: 240px;
+            width: 100%;
+            max-width: 240px; /* keeps a reasonable size on large screens but prevents overflow on phones */
         }
         
         .info {
@@ -167,6 +172,22 @@
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
+        }
+
+        /* Make the chess board containers responsive instead of fixed px widths */
+        #editing-board, #flashcard-board {
+            /* Use a dynamic width that never exceeds 400px but can shrink to fit small screens */
+            width: min(90vw, 400px);
+        }
+        /* On really narrow screens reduce spacing and container maxima */
+        @media (max-width: 420px) {
+            .main { padding: 12px; }
+            .editor { max-width: 100%; padding: 0; }
+            .flashcard-preview { max-width: 100%; padding: 0; }
+            .answer-board { max-width: 80vw; }
+            .control { gap: 8px; }
+            .numeric { left: -8px; }
+            .alpha { bottom: -8px; }
         }
 
         @media print {
@@ -194,7 +215,7 @@
 <body>
     <div class="main">
         <div class="editor">
-        <div id="editing-board" style="width: 400px"></div>
+        <div id="editing-board"></div>
         <div class="control">
             <button id="startBtn">Start Position</button>
             <button id="clearBtn">Clear Board</button>
@@ -237,7 +258,7 @@
     </div>
     <div class="flashcard-preview">
         <h1 id="title-preview">Title</h1>
-        <div id="flashcard-board" style="width: 400px"></div>
+        <div id="flashcard-board"></div>
         <p id="description-preview">Description</p>
         <p id="resposta">Resposta:</p>
         <div id="answer-preview" class="rotated">
